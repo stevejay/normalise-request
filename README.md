@@ -53,3 +53,7 @@ The normaliser object that specifies the normalisations to apply to the object.
 ## License
 
 MIT
+
+## Acknowledgements
+
+This package was influenced by the package [Validate.js](https://validatejs.org/).
