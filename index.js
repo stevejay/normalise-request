@@ -1,0 +1,131 @@
+'use strict';
+
+const normalise = function(params, normalisers) {
+    walkNormalisers(params, normalisers);
+    return params;
+};
+
+function walkNormalisers(params, normalisers) {
+    const namesOfPropertiesToNormalise = Object.keys(normalisers);
+
+    namesOfPropertiesToNormalise.forEach(nameOfPropertyToNormalise => {
+        const namesOfNormalisersToApply = Object.keys(normalisers[nameOfPropertyToNormalise]);
+
+        namesOfNormalisersToApply.forEach(nameOfNormaliser => {
+            const normaliserOptions = normalisers[nameOfPropertyToNormalise][nameOfNormaliser];
+
+            if (nameOfNormaliser === 'each') {
+                const arrayValues = params[nameOfPropertyToNormalise];
+
+                if (isArray(arrayValues)) {
+                    for (var i = 0; i < arrayValues.length; ++i) {
+                        walkNormalisers(arrayValues[i], normaliserOptions); // these are the subnormalisers
+                    }
+                } else if (isDefined(arrayValues)) {
+                    throw new Error(' is not an array');
+                }
+            } else if (nameOfNormaliser === 'primitivesEach') {
+                const arrayValues = params[nameOfPropertyToNormalise];
+                const namesOfNormalisers = Object.keys(normaliserOptions);
+
+                if (isArray(arrayValues)) {
+                    for (let i = 0; i < arrayValues.length; ++i) {
+                        for (let j = 0; j < namesOfNormalisers.length; ++j) {
+                            arrayValues[i] = applyNormaliser(
+                                namesOfNormalisers[j],
+                                {},
+                                arrayValues[i]);
+                        }
+                    }
+                } else if (isDefined(arrayValues)) {
+                    throw new Error(' is not an array');
+                }
+            } else if (nameOfNormaliser === 'object') {
+                const value = params[nameOfPropertyToNormalise];
+
+                if (isObject(value) && !isArray(value)) {
+                    walkNormalisers(value, normaliserOptions);
+                } else if (isDefined(value)) {
+                    throw new Error(' is not an object');
+                }
+            } else {
+                params[nameOfPropertyToNormalise] = applyNormaliser(
+                    nameOfNormaliser,
+                    normaliserOptions,
+                    params[nameOfPropertyToNormalise]);
+            }
+        });
+    });
+}
+
+function applyNormaliser(name, options, param) {
+    const normaliser = normalise.normalisers[name];
+
+    if (!normaliser) {
+        throw new Error('Unknown normaliser \'' + name + '\' specified');
+    }
+
+    return normaliser(param, options);
+}
+
+function isObject(value) {
+    return value === Object(value);
+}
+
+function isArray(value) {
+    return {}.toString.call(value) === '[object Array]';
+}
+
+function isEmpty(param) {
+    if (param === null) { 
+        return true;
+    } else if (param.hasOwnProperty('length')) {
+        return param.length === 0;
+    } else {
+        return false;
+    }
+}
+
+function isDefined(value) {
+    return value !== null && value !== undefined;
+}
+
+normalise.normalisers = {
+    trim: param => typeof param !== 'string' ? param : param.trim(),
+    toUpperCase: param => typeof param !== 'string' ? param : param.toUpperCase(),
+    toLowerCase: param => typeof param !== 'string' ? param : param.toLowerCase(),
+    undefinedIfEmpty: param => {
+        if (param === null || param === undefined) { 
+            return undefined;
+        } else if (param.hasOwnProperty('length')) {
+            return param.length === 0 ? undefined : param;
+        } else {
+            return param;
+        }
+    },
+    collapseWhitespace: param => typeof param !== 'string' ?
+        param :
+        param.replace(/\s{2,}/g, ' '),
+    replace: (param, options) => {
+        if (typeof param !== 'string') {
+            return param;
+        }
+
+        return param.replace(options.pattern, options.newSubStr);
+    },
+    toFloat: param => typeof param === 'number' ? param : parseFloat(param),
+    toInt: param => parseInt(param),
+    default: (param, options) => {
+        const defaultValue = options.hasOwnProperty('value') ?
+            options.value :
+            options;
+
+        if (defaultValue === undefined) {
+            throw new Error('value option not specified for default normaliser');
+        }
+
+        return param === null || param === undefined ? defaultValue : param;
+    }
+};
+
+module.exports = normalise;
