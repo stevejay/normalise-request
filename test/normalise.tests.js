@@ -120,19 +120,21 @@ describe('normalise', function() {
 
     describe('default', function() {
         const tests = [
-            { arg: '', expected: '' },
-            { arg: 'Foo', expected: 'Foo' },
-            { arg: [], expected: [] },
-            { arg: 0, expected: 0 },
-            { arg: null, expected: 1 },
-            { arg: undefined, expected: 1 }
+            { arg: '', default: 1, expected: '' },
+            { arg: 'Foo', default: 1, expected: 'Foo' },
+            { arg: [], default: 1, expected: [] },
+            { arg: 0, default: 1, expected: 0 },
+            { arg: null, default: 1, expected: 1 },
+            { arg: undefined, default: 1, expected: 1 },
+            { arg: null, default: null, expected: null },
+            { arg: undefined, default: null, expected: null }
         ];
 
         tests.forEach(function(test) {
-            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), function() {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg) + ' and default value ' + JSON.stringify(test.default), function() {
                 const normalisers = {
                     name: {
-                        default: 1
+                        default: test.default
                     }
                 };
 
@@ -143,6 +145,20 @@ describe('normalise', function() {
                 normalise(params, normalisers);
                 should(params.name).eql(test.expected);
             });
+        });
+
+        it('should throw if default value is undefined', function() {
+            const normalisers = {
+                name: {
+                    default: undefined
+                }
+            };
+
+            const params = {
+                name: 'foo'
+            };
+
+            (() => normalise(params, normalisers)).should.throw('value option not specified for default normaliser');
         });
     });
 

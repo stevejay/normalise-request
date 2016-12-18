@@ -72,16 +72,6 @@ function isArray(value) {
     return {}.toString.call(value) === '[object Array]';
 }
 
-function isEmpty(param) {
-    if (param === null) { 
-        return true;
-    } else if (param.hasOwnProperty('length')) {
-        return param.length === 0;
-    } else {
-        return false;
-    }
-}
-
 function isDefined(value) {
     return value !== null && value !== undefined;
 }
@@ -112,7 +102,7 @@ normalise.normalisers = {
     toFloat: param => typeof param === 'string' ? parseFloat(param) : param,
     toInt: param => typeof param === 'string' ? parseInt(param) : param,
     default: (param, options) => {
-        const defaultValue = options.hasOwnProperty('value') ?
+        const defaultValue = options && options.hasOwnProperty('value') ?
             options.value :
             options;
 

@@ -15,22 +15,116 @@ $ npm install --save normalise-request
 
 ## Usage
 
+### Simple Objects
+
+The most basic usage is normalising a simple object:
+
 ```js
 const normalise = require('normalise-request');
+
+const request = {
+    name: '   Steve   ',
+    address: '  The Locksfords   '
+};
 
 const normaliser = {
     name: {
         trim: true
+    },
+    address: {
+        trim: true
     }
-};
-
-const request = {
-    name: '   foo   '
 };
 
 normalise(request, normaliser);
 
-// request.name is now 'foo'
+// request.name is now 'Steve'
+// request.address is now 'The Locksfords'
+```
+
+### Nested Objects
+
+```js
+const normalise = require('normalise-request');
+
+const request = {
+    name: '   Steve   ',
+    address: {
+        firstLine: '  The Locksfords  ',
+        secondLine: ' London '
+    }
+};
+
+const normaliser = {
+    name: {
+        trim: true
+    },
+    address: {
+        object: {
+            firstLine: { trim: true },
+            secondLine: { trim: true },
+        }
+    }
+};
+
+normalise(request, normaliser);
+
+// request.name is now 'Steve'
+// request.address.firstLine is now 'The Locksfords'
+// request.address.secondLine is now 'London'
+```
+
+### Arrays of Primitive Types
+
+```js
+const normalise = require('normalise-request');
+
+const request = {
+    tags: ['  art  ', '   theatre   ']
+};
+
+const normaliser = {
+    tags: {
+        each: {
+            trim: true
+        }
+    }
+};
+
+normalise(request, normaliser);
+
+// request.tags[0] is now 'art'
+// request.tags[1] is now 'theatre'
+```
+
+### Arrays of Objects
+
+```js
+const normalise = require('normalise-request');
+
+const request = {
+    tags: [
+        { label: '  art  ' },
+        { label: '   theatre   '}
+    ]
+};
+
+const normaliser = {
+    tags: {
+        each: {
+            object: {
+                label: {
+                    trim: true
+                }
+            }
+        }
+    }
+};
+
+normalise(request, normaliser);
+
+// request.tags[0].label is now 'art'
+// request.tags[1].label is now 'theatre'
 ```
 
 ## API
@@ -50,6 +144,10 @@ The object to normalise.
 Type: `Object`
 
 The normaliser object that specifies the normalisations to apply to the object.
+
+### Available Normalisers
+
+TODO
 
 ## License
 
