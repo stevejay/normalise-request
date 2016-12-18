@@ -350,6 +350,8 @@ describe('normalise', function() {
 
     describe('undefinedIfEmpty', function() {
         const tests = [
+            { arg: 26, expected: 26 },
+            { arg: 0, expected: 0 },
             { arg: 'hello', expected: 'hello' },
             { arg: '  ', expected: '  ' },
             { arg: '', expected: undefined },
