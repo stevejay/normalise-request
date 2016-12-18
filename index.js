@@ -16,29 +16,25 @@ function walkNormalisers(params, normalisers) {
 
             if (nameOfNormaliser === 'each') {
                 const arrayValues = params[nameOfPropertyToNormalise];
-
-                if (isArray(arrayValues)) {
-                    for (var i = 0; i < arrayValues.length; ++i) {
-                        walkNormalisers(arrayValues[i], normaliserOptions); // these are the subnormalisers
-                    }
-                } else if (isDefined(arrayValues)) {
-                    throw new Error(' is not an array');
-                }
-            } else if (nameOfNormaliser === 'primitivesEach') {
-                const arrayValues = params[nameOfPropertyToNormalise];
                 const namesOfNormalisers = Object.keys(normaliserOptions);
 
                 if (isArray(arrayValues)) {
-                    for (let i = 0; i < arrayValues.length; ++i) {
-                        for (let j = 0; j < namesOfNormalisers.length; ++j) {
-                            arrayValues[i] = applyNormaliser(
-                                namesOfNormalisers[j],
-                                {},
-                                arrayValues[i]);
+                    if (namesOfNormalisers.indexOf('object') > -1) {
+                        for (var i = 0; i < arrayValues.length; ++i) {
+                            walkNormalisers(arrayValues[i], normaliserOptions.object);
+                        }
+                    } else {
+                        for (let i = 0; i < arrayValues.length; ++i) {
+                            for (let j = 0; j < namesOfNormalisers.length; ++j) {
+                                arrayValues[i] = applyNormaliser(
+                                    namesOfNormalisers[j],
+                                    {},
+                                    arrayValues[i]);
+                            }
                         }
                     }
                 } else if (isDefined(arrayValues)) {
-                    throw new Error(' is not an array');
+                    throw new Error(`${nameOfPropertyToNormalise} is not an array`);
                 }
             } else if (nameOfNormaliser === 'object') {
                 const value = params[nameOfPropertyToNormalise];
@@ -46,7 +42,7 @@ function walkNormalisers(params, normalisers) {
                 if (isObject(value) && !isArray(value)) {
                     walkNormalisers(value, normaliserOptions);
                 } else if (isDefined(value)) {
-                    throw new Error(' is not an object');
+                    throw new Error(`${nameOfPropertyToNormalise} is not an object`);
                 }
             } else {
                 params[nameOfPropertyToNormalise] = applyNormaliser(
@@ -113,8 +109,8 @@ normalise.normalisers = {
 
         return param.replace(options.pattern, options.newSubStr);
     },
-    toFloat: param => typeof param === 'number' ? param : parseFloat(param),
-    toInt: param => parseInt(param),
+    toFloat: param => typeof param === 'string' ? parseFloat(param) : param,
+    toInt: param => typeof param === 'string' ? parseInt(param) : param,
     default: (param, options) => {
         const defaultValue = options.hasOwnProperty('value') ?
             options.value :

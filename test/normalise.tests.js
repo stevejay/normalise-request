@@ -36,6 +36,88 @@ describe('normalise', function() {
         });
     });
 
+    describe('object', function() {
+        it('should walk an object', function() {
+            const normalisers = {
+                shipping: {
+                    object: {
+                        address: {
+                            trim: true
+                        },
+                        postcode: {
+                            trim: true
+                        }
+                    }
+                }
+            };
+
+            const params = {
+                shipping: {
+                    address: '   foo ',
+                    postcode: '  bar  '
+                }
+            };
+
+            normalise(params, normalisers);
+
+            should(params).eql({
+                shipping: {
+                    address: 'foo',
+                    postcode: 'bar'
+                }
+            });
+        });
+
+        it('should ignore a null object', function() {
+            const normalisers = {
+                shipping: {
+                    object: {
+                        address: {
+                            trim: true
+                        },
+                        postcode: {
+                            trim: true
+                        }
+                    }
+                }
+            };
+
+            const params = {
+                shipping: null
+            };
+
+            normalise(params, normalisers);
+
+            should(params).eql({
+                shipping: null
+            });
+        });
+
+        it('should throw if trying to walk an array', function() {
+            const normalisers = {
+                shipping: {
+                    object: {
+                        address: {
+                            trim: true
+                        },
+                        postcode: {
+                            trim: true
+                        }
+                    }
+                }
+            };
+
+            const params = {
+                shipping: [{
+                    address: '   foo ',
+                    postcode: '  bar  '
+                }]
+            };
+
+            (() => normalise(params, normalisers)).should.throw(/is not an object$/);
+        });
+    });
+
     describe('default', function() {
         const tests = [
             { arg: '', expected: '' },
@@ -60,6 +142,104 @@ describe('normalise', function() {
 
                 normalise(params, normalisers);
                 should(params.name).eql(test.expected);
+            });
+        });
+    });
+
+    describe('each', function() {
+        it('should walk each of an array of objects', function() {
+            const normalisers = {
+                shipping: {
+                    each: {
+                        object: {
+                            address: {
+                                trim: true
+                            }
+                        }
+                    }
+                }
+            };
+
+            const params = {
+                shipping: [
+                    { address: '   foo ' },
+                    { address: '  bar     ' },
+                ]
+            };
+
+            normalise(params, normalisers);
+
+            should(params).eql({
+                shipping: [
+                    { address: 'foo' },
+                    { address: 'bar' }
+                ]
+            });
+        });
+
+        it('should throw if trying to walk something that is not an array', function() {
+            const normalisers = {
+                shipping: {
+                    each: {
+                        object: {
+                            address: {
+                                trim: true
+                            }
+                        }
+                    }
+                }
+            };
+
+            const params = {
+                shipping: { foo: 'bar' }
+            };
+
+            (() => normalise(params, normalisers)).should.throw(/is not an array$/);
+        });
+
+        it('should walk each of an array of strings', function() {
+            const normalisers = {
+                shipping: {
+                    each: {
+                        trim: true
+                    }
+                }
+            };
+
+            const params = {
+                shipping: [
+                    '   foo ',
+                    '  bar     '
+                ]
+            };
+
+            normalise(params, normalisers);
+
+            should(params).eql({
+                shipping: ['foo', 'bar']
+            });
+        });
+
+        it('should walk each of an array of objects where entire object is validated', function() {
+            const normalisers = {
+                shipping: {
+                    each: {
+                        undefinedIfEmpty: true
+                    }
+                }
+            };
+
+            const params = {
+                shipping: [
+                    [],
+                    []
+                ]
+            };
+
+            normalise(params, normalisers);
+
+            should(params).eql({
+                shipping: [undefined, undefined]
             });
         });
     });
@@ -95,27 +275,6 @@ describe('normalise', function() {
                 normalise(params, normalisers);
                 should.equal(params.shipping.address, test.expected);
             });
-        });
-
-        it('should trim array of strings', function() {
-            const normalisers = {
-                names: {
-                    primitivesEach: { 
-                        trim: true
-                    }
-                }
-            };
-
-            const params = {
-                names: [
-                    '  foo  ',
-                    '  Bar    '
-                ]
-            };
-
-            normalise(params, normalisers);
-            params.names[0].should.equal('foo');
-            params.names[1].should.equal('Bar');
         });
     });
 
@@ -264,8 +423,10 @@ describe('normalise', function() {
             { arg: '  hello  you    there ', expected: 'NaN' },
             { arg: '  ', expected: 'NaN' },
             { arg: '', expected: 'NaN' },
-            { arg: null, expected: 'NaN' },
-            { arg: undefined, expected: 'NaN' }
+            { arg: 54, expected: 54 },
+            { arg: 54.8, expected: 54.8 },
+            { arg: null, expected: null },
+            { arg: undefined, expected: undefined }
         ];
 
         tests.forEach(function(test) {
@@ -287,6 +448,33 @@ describe('normalise', function() {
                 } else {
                     should(params.value).eql(test.expected);
                 }
+            });
+        });
+    });
+
+    describe('toInt', function() {
+        const tests = [
+            { arg: '54', expected: 54 },
+            { arg: 'H', expected: NaN },
+            { arg: '', expected: NaN },
+            { arg: null, expected: null },
+            { arg: undefined, expected: undefined }
+        ];
+
+        tests.forEach(function(test) {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), function() {
+                const normalisers = {
+                    value: {
+                        toInt: true
+                    },
+                };
+
+                const params = {
+                    value: test.arg
+                };
+
+                normalise(params, normalisers);
+                should(params.value).eql(test.expected);
             });
         });
     });
