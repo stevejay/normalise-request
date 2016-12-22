@@ -5,7 +5,12 @@ Normalises API requests
 [![npm version](https://badge.fury.io/js/normalise-request.svg)](https://badge.fury.io/js/normalise-request)
 [![Codeship Status for stevejay/normalise-request](https://app.codeship.com/projects/4fd232b0-a545-0134-c5f3-66ecd8905c85/status?branch=master)](https://app.codeship.com/projects/190828)
 [![Coverage Status](https://coveralls.io/repos/github/stevejay/normalise-request/badge.svg?branch=master)](https://coveralls.io/github/stevejay/normalise-request?branch=master)
-[![dependency status](https://david-dm.org/stevejay/normalise-request.svg)](https://david-dm.org/stevejay/normalise-request)
+[![bitHound Overall Score](https://www.bithound.io/github/stevejay/normalise-request/badges/score.svg)](https://www.bithound.io/github/stevejay/normalise-request)
+[![bitHound Dependencies](https://www.bithound.io/github/stevejay/normalise-request/badges/dependencies.svg)](https://www.bithound.io/github/stevejay/normalise-request/master/dependencies/npm)
+[![bitHound Dev Dependencies](https://www.bithound.io/github/stevejay/normalise-request/badges/devDependencies.svg)](https://www.bithound.io/github/stevejay/normalise-request/master/dependencies/npm)
+![license](https://img.shields.io/npm/l/normalise-request.svg)
+
+[![NPM](https://nodei.co/npm/normalise-request.png)](https://nodei.co/npm/normalise-request/)
 
 ## Install
 
