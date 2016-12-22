@@ -496,4 +496,32 @@ describe('normalise', function() {
             });
         });
     });
+
+    describe('decodeAsUriComponent', function() {
+        const tests = [
+            { arg: 'http%3A%2F%2Fw3schools.com%2Fmy%20test.asp%3Fname%3Dst%C3%A5le%26car%3Dsaab', expected: 'http://w3schools.com/my test.asp?name=ståle&car=saab' },
+            { arg: '%2F', expected: '/' },
+            { arg: '   ', expected: '   ' },
+            { arg: '', expected: '' },
+            { arg: null, expected: null },
+            { arg: undefined, expected: undefined }
+        ];
+
+        tests.forEach(function(test) {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), function() {
+                const normalisers = {
+                    value: {
+                        decodeAsUriComponent: true
+                    },
+                };
+
+                const params = {
+                    value: test.arg
+                };
+
+                normalise(params, normalisers);
+                should(params.value).eql(test.expected);
+            });
+        });
+    });
 });

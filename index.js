@@ -111,6 +111,13 @@ normalise.normalisers = {
         }
 
         return param === null || param === undefined ? defaultValue : param;
+    },
+    decodeAsUriComponent: param => {
+        if (typeof param !== 'string') {
+            return param;
+        }
+
+        return decodeURIComponent(param);
     }
 };
 
