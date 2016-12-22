@@ -67,7 +67,7 @@ const normaliser = {
     address: {
         object: {
             firstLine: { trim: true },
-            secondLine: { trim: true },
+            secondLine: { trim: true }
         }
     }
 };
@@ -150,9 +150,139 @@ Type: `Object`
 
 The normaliser object that specifies the normalisations to apply to the object.
 
-### Available Normalisers
+### Normalisers
 
-TODO
+#### trim
+
+Trims the value to normalise if it is a string.
+
+```js
+const normaliser = {
+    name: {
+        trim: true
+    }
+};
+```
+
+#### toUpperCase
+
+Uppercases the value to normalise if it is a string.
+
+```js
+const normaliser = {
+    name: {
+        toUpperCase: true
+    }
+};
+```
+
+#### toLowerCase
+
+Lowercases the value to normalise if it is a string.
+
+```js
+const normaliser = {
+    name: {
+        toLowerCase: true
+    }
+};
+```
+
+#### undefinedIfEmpty
+
+Sets the value to normalise to `undefined` if it is a zero-length string or
+a zero-length array, or if the value is `null`.
+
+```js
+const normaliser = {
+    name: {
+        undefinedIfEmpty: true
+    }
+};
+```
+
+#### collapseWhitespace
+
+Collapses whitespace in the value to normalise if it is a string.
+Any runs of multiple whitespace characters are each 
+replaced by a single space character. If using this normaliser
+on a value, you would normally also use the `trim` normaliser.
+
+```js
+const normaliser = {
+    name: {
+        toLowerCase: true
+    }
+};
+```
+
+#### replace
+
+Replaces matching strings in the value to normalise, if that 
+value is a string. This normaliser uses the `String.replace`
+method to do the replacement, so the arguments to this 
+normaliser and its behaviour correspond to those of that string method:
+
+- `pattern` can be a string or a regex 
+- `newSubStr` is the replacement string
+
+```js
+const normaliser = {
+    name: {
+        replace: { pattern: /H/g, newSubStr: 'Y'}
+    }
+};
+```
+
+#### toFloat
+
+Converts the value to normalise to a float number, if that value is a string.
+
+```js
+const normaliser = {
+    name: {
+        toFloat: true
+    }
+};
+```
+
+#### toInt
+
+Converts the value to normalise to an integer number, if that value is a string.
+
+```js
+const normaliser = {
+    name: {
+        toInt: true
+    }
+};
+```
+
+#### default
+
+Sets the value to normalise to a replacement value, if that value to 
+normalise is `null` or `undefined`.
+
+```js
+const normaliser = {
+    name: {
+        default: 'my default value'
+    }
+};
+```
+
+#### decodeAsUriComponent
+
+Converts the value to normalise using the `decodeAsUriComponent` global method,
+if that value is a string.
+
+```js
+const normaliser = {
+    name: {
+        toInt: true
+    }
+};
+```
 
 ## License
 
