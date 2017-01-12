@@ -4,6 +4,42 @@ var normalise = require('../index');
 var should = require('should');
 
 describe('normalise', function() {
+    describe('applies normalisers in declaration order', function() {
+        it('should trim and then set to undefined', function() {
+            const normalisers = {
+                name: {
+                    trim: true,
+                    undefinedIfEmpty: true
+                }
+            };
+
+            const params = {
+                name: '    '
+            };
+
+            normalise(params, normalisers);
+
+            should(params).eql({ name: undefined });
+        });
+
+        it('should set to undefined and then trim', function() {
+            const normalisers = {
+                name: {
+                    undefinedIfEmpty: true,
+                    trim: true
+                }
+            };
+
+            const params = {
+                name: '    '
+            };
+
+            normalise(params, normalisers);
+
+            should(params).eql({ name: '' });
+        });
+    });
+
     describe('unknown normaliser', function() {
         it('should throw error', function() {
             const normalisers = {
