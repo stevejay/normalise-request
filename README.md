@@ -47,6 +47,44 @@ normalise(request, normaliser);
 // request.address is now 'The Locksfords'
 ```
 
+Normalisers are applied in declaration order:
+
+```js
+// Example One:
+
+const request = {
+    name: '      ',
+};
+
+const normaliser = {
+    name: {
+        trim: true,
+        undefinedIfEmpty: true
+    }
+};
+
+normalise(request, normaliser);
+
+// request.name is now undefined
+
+// Example Two:
+
+const request = {
+    name: '      ',
+};
+
+const normaliser = {
+    name: {
+        undefinedIfEmpty: true,
+        trim: true
+    }
+};
+
+normalise(request, normaliser);
+
+// request.name is now '' (the empty string)
+```
+
 ### Nested Objects
 
 ```js
@@ -211,7 +249,7 @@ on a value, you would normally also use the `trim` normaliser.
 ```js
 const normaliser = {
     name: {
-        toLowerCase: true
+        collapseWhitespace: true
     }
 };
 ```
@@ -279,7 +317,7 @@ if that value is a string.
 ```js
 const normaliser = {
     name: {
-        toInt: true
+        decodeAsUriComponent: true
     }
 };
 ```
