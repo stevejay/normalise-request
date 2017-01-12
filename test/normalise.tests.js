@@ -560,4 +560,75 @@ describe('normalise', function() {
             });
         });
     });
+
+    describe('split', function() {
+        const tests = [
+            {
+                args: {
+                    value: 'foo,bar',
+                    separator: ','
+                },
+                expected: ['foo', 'bar']
+            },
+            {
+                args: {
+                    value: 'foo',
+                    separator: ' '
+                },
+                expected: ['foo']
+            },
+            {
+                args: {
+                    value: '',
+                    separator: '-'
+                },
+                expected: ['']
+            },
+            {
+                args: {
+                    value: null,
+                    separator: '-'
+                },
+                expected: null
+            },
+            {
+                args: {
+                    value: undefined,
+                    separator: '-'
+                },
+                expected: undefined
+            },
+            {
+                args: {
+                    value: 99,
+                    separator: '-'
+                },
+                expected: 99
+            },
+            {
+                args: {
+                    value: ['foo,', 'bar,'],
+                    separator: ','
+                },
+                expected: ['foo,', 'bar,']
+            }
+        ];
+
+        tests.forEach(function(test) {
+            it('should return ' + JSON.stringify(test.expected) + ' for args ' + JSON.stringify(test.args), function() {
+                const normalisers = {
+                    value: {
+                        split: test.args.separator
+                    }
+                };
+
+                const params = {
+                    value: test.args.value
+                };
+
+                normalise(params, normalisers);
+                should(params.value).eql(test.expected);
+            });
+        });
+    });
 });

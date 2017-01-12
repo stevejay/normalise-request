@@ -14,9 +14,21 @@ Normalises API requests
 
 ## Install
 
-```
+```bash
 $ npm install --save normalise-request
 ```
+
+You can include this module using CommonJS format (`require`) or ES6 format (`import`):
+
+```js
+const normalise = require('normalise-request');
+
+// or
+
+import normalise from 'normalise-request';
+```
+
+The examples in this README file are in CommonJS format.
 
 ## Usage
 
@@ -170,6 +182,30 @@ normalise(request, normaliser);
 // request.tags[1].label is now 'theatre'
 ```
 
+### Adding a new normaliser
+
+```js
+const normalise = require('normalise-request');
+
+const changeToFoo = (param, options) => {
+    // param - the value this normaliser is being applied to.
+    // options - the object assigned to the normaliser 
+    return 'foo';
+};
+
+normalise.normalisers.changeToFoo = changeToFoo;
+
+// use it like a built-in normaliser:
+
+const normaliser = {
+    name: {
+        changeToFoo: { someOption: 'value' }
+    }
+}
+
+// name will become 'foo'
+```
+
 ## API
 
 ### normalise(object, normaliser)
@@ -304,7 +340,15 @@ normalise is `null` or `undefined`.
 ```js
 const normaliser = {
     name: {
-        default: 'my default value'
+        default: { value: 'the default value' }
+    }
+};
+
+// or
+
+const normaliser = {
+    name: {
+        default: 'the default value'
     }
 };
 ```
@@ -318,6 +362,28 @@ if that value is a string.
 const normaliser = {
     name: {
         decodeAsUriComponent: true
+    }
+};
+```
+
+#### split
+
+Converts the value to normalise using the `string.split` method,
+if that value is a string. The argument to the normaliser is the
+separator string for the split.
+
+```js
+const normaliser = {
+    name: {
+        split: { separator: ',' }
+    }
+};
+
+// or 
+
+const normaliser = {
+    name: {
+        split: ','
     }
 };
 ```

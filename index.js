@@ -118,6 +118,17 @@ normalise.normalisers = {
         }
 
         return decodeURIComponent(param);
+    },
+    split: (param, options) => {
+        const separator = options && options.hasOwnProperty('separator') ?
+            options.separator :
+            options;
+
+        if (separator === undefined) {
+            throw new Error('separator option not specified for split normaliser');
+        }
+        
+        return typeof param === 'string' ? param.split(separator) : param;
     }
 };
 
