@@ -6,6 +6,10 @@ const normalise = function(params, normalisers) {
 };
 
 function walkNormalisers(params, normalisers) {
+    if (params == null) {
+        return;
+    }
+
     const namesOfPropertiesToNormalise = Object.keys(normalisers);
 
     namesOfPropertiesToNormalise.forEach(nameOfPropertyToNormalise => {

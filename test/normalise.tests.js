@@ -56,6 +56,42 @@ describe('normalise', function() {
         });
     });
 
+    describe('null params', function() {
+        it('should not throw error', function() {
+            const normalisers = {
+                name: {
+                    trim: true
+                }
+            };
+
+            normalise(null, normalisers);
+        });
+    });
+
+    describe('undefined params', function() {
+        it('should not throw error', function() {
+            const normalisers = {
+                name: {
+                    trim: true
+                }
+            };
+
+            normalise(undefined, normalisers);
+        });
+    });
+
+    describe('empty params', function() {
+        it('should not throw error', function() {
+            const normalisers = {
+                name: {
+                    trim: true
+                }
+            };
+
+            normalise({}, normalisers);
+        });
+    });
+
     describe('unknown property', function() {
         it('should not throw error', function() {
             const normalisers = {
