@@ -105,6 +105,20 @@ normalise.normalisers = {
     },
     toFloat: param => typeof param === 'string' ? parseFloat(param) : param,
     toInt: param => typeof param === 'string' ? parseInt(param) : param,
+    toBool: param => {
+        if (typeof param !== 'string') {
+            return param;
+        }
+
+        const normalised = param.toLowerCase();
+        if (normalised === 'true') {
+            return true;
+        } else if (normalised === 'false') {
+            return false;
+        }
+
+        return param;
+    },
     default: (param, options) => {
         const defaultValue = options && options.hasOwnProperty('value') ?
             options.value :
