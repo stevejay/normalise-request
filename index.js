@@ -21,15 +21,16 @@ function walkNormalisers(params, normalisers) {
             if (nameOfNormaliser === 'each') {
                 const arrayValues = params[nameOfPropertyToNormalise];
                 const namesOfNormalisers = Object.keys(normaliserOptions);
+                var i;
 
                 if (isArray(arrayValues)) {
                     if (namesOfNormalisers.indexOf('object') > -1) {
-                        for (var i = 0; i < arrayValues.length; ++i) {
+                        for (i = 0; i < arrayValues.length; ++i) {
                             walkNormalisers(arrayValues[i], normaliserOptions.object);
                         }
                     } else {
-                        for (let i = 0; i < arrayValues.length; ++i) {
-                            for (let j = 0; j < namesOfNormalisers.length; ++j) {
+                        for (i = 0; i < arrayValues.length; ++i) {
+                            for (var j = 0; j < namesOfNormalisers.length; ++j) {
                                 arrayValues[i] = applyNormaliser(
                                     namesOfNormalisers[j],
                                     {},
