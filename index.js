@@ -12,10 +12,10 @@ function walkNormalisers(params, normalisers) {
 
     const namesOfPropertiesToNormalise = Object.keys(normalisers);
 
-    namesOfPropertiesToNormalise.forEach(nameOfPropertyToNormalise => {
+    namesOfPropertiesToNormalise.forEach(function(nameOfPropertyToNormalise) {
         const namesOfNormalisersToApply = Object.keys(normalisers[nameOfPropertyToNormalise]);
 
-        namesOfNormalisersToApply.forEach(nameOfNormaliser => {
+        namesOfNormalisersToApply.forEach(function(nameOfNormaliser) {
             const normaliserOptions = normalisers[nameOfPropertyToNormalise][nameOfNormaliser];
 
             if (nameOfNormaliser === 'each') {
@@ -81,10 +81,10 @@ function isDefined(value) {
 }
 
 normalise.normalisers = {
-    trim: param => typeof param !== 'string' ? param : param.trim(),
-    toUpperCase: param => typeof param !== 'string' ? param : param.toUpperCase(),
-    toLowerCase: param => typeof param !== 'string' ? param : param.toLowerCase(),
-    undefinedIfEmpty: param => {
+    trim: function(param) { return typeof param !== 'string' ? param : param.trim(); },
+    toUpperCase: function(param) { return typeof param !== 'string' ? param : param.toUpperCase(); },
+    toLowerCase: function(param) { return typeof param !== 'string' ? param : param.toLowerCase(); },
+    undefinedIfEmpty: function(param) {
         if (param === null || param === undefined) { 
             return undefined;
         } else if (param.hasOwnProperty('length')) {
@@ -93,19 +93,20 @@ normalise.normalisers = {
             return param;
         }
     },
-    collapseWhitespace: param => typeof param !== 'string' ?
+    collapseWhitespace: function(param) { return typeof param !== 'string' ?
         param :
-        param.replace(/\s{2,}/g, ' '),
-    replace: (param, options) => {
+        param.replace(/\s{2,}/g, ' ');
+    },
+    replace: function(param, options) {
         if (typeof param !== 'string') {
             return param;
         }
 
         return param.replace(options.pattern, options.newSubStr);
     },
-    toFloat: param => typeof param === 'string' ? parseFloat(param) : param,
-    toInt: param => typeof param === 'string' ? parseInt(param) : param,
-    toBool: param => {
+    toFloat: function(param) { return typeof param === 'string' ? parseFloat(param) : param; },
+    toInt: function(param) { return typeof param === 'string' ? parseInt(param) : param; },
+    toBool: function(param) {
         if (typeof param !== 'string') {
             return param;
         }
@@ -119,7 +120,7 @@ normalise.normalisers = {
 
         return param;
     },
-    default: (param, options) => {
+    default: function(param, options) {
         const defaultValue = options && options.hasOwnProperty('value') ?
             options.value :
             options;
@@ -130,14 +131,14 @@ normalise.normalisers = {
 
         return param === null || param === undefined ? defaultValue : param;
     },
-    decodeAsUriComponent: param => {
+    decodeAsUriComponent: function(param) {
         if (typeof param !== 'string') {
             return param;
         }
 
         return decodeURIComponent(param);
     },
-    split: (param, options) => {
+    split: function(param, options) {
         const separator = options && options.hasOwnProperty('separator') ?
             options.separator :
             options;

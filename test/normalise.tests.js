@@ -198,7 +198,9 @@ describe('normalise', function() {
             { arg: 0, default: 1, expected: 0 },
             { arg: null, default: 1, expected: 1 },
             { arg: undefined, default: 1, expected: 1 },
+            { arg: undefined, default: false, expected: false },
             { arg: null, default: null, expected: null },
+            { arg: null, default: false, expected: false },
             { arg: undefined, default: null, expected: null }
         ];
 
