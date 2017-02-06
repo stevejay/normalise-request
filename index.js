@@ -1,6 +1,6 @@
 'use strict';
 
-const normalise = function(params, normalisers) {
+var normalise = function(params, normalisers) {
     walkNormalisers(params, normalisers);
     return params;
 };
@@ -10,18 +10,18 @@ function walkNormalisers(params, normalisers) {
         return;
     }
 
-    const namesOfPropertiesToNormalise = Object.keys(normalisers);
+    var namesOfPropertiesToNormalise = Object.keys(normalisers);
 
     namesOfPropertiesToNormalise.forEach(function(nameOfPropertyToNormalise) {
-        const namesOfNormalisersToApply = Object.keys(normalisers[nameOfPropertyToNormalise]);
+        var namesOfNormalisersToApply = Object.keys(normalisers[nameOfPropertyToNormalise]);
 
         namesOfNormalisersToApply.forEach(function(nameOfNormaliser) {
-            const normaliserOptions = normalisers[nameOfPropertyToNormalise][nameOfNormaliser];
+            var normaliserOptions = normalisers[nameOfPropertyToNormalise][nameOfNormaliser];
+            var i, j;
 
             if (nameOfNormaliser === 'each') {
-                const arrayValues = params[nameOfPropertyToNormalise];
-                const namesOfNormalisers = Object.keys(normaliserOptions);
-                var i;
+                var arrayValues = params[nameOfPropertyToNormalise];
+                var namesOfNormalisers = Object.keys(normaliserOptions);
 
                 if (isArray(arrayValues)) {
                     if (namesOfNormalisers.indexOf('object') > -1) {
@@ -30,7 +30,7 @@ function walkNormalisers(params, normalisers) {
                         }
                     } else {
                         for (i = 0; i < arrayValues.length; ++i) {
-                            for (var j = 0; j < namesOfNormalisers.length; ++j) {
+                            for (j = 0; j < namesOfNormalisers.length; ++j) {
                                 arrayValues[i] = applyNormaliser(
                                     namesOfNormalisers[j],
                                     {},
@@ -39,15 +39,15 @@ function walkNormalisers(params, normalisers) {
                         }
                     }
                 } else if (isDefined(arrayValues)) {
-                    throw new Error(`${nameOfPropertyToNormalise} is not an array`);
+                    throw new Error(nameOfPropertyToNormalise + ' is not an array');
                 }
             } else if (nameOfNormaliser === 'object') {
-                const value = params[nameOfPropertyToNormalise];
+                var value = params[nameOfPropertyToNormalise];
 
                 if (isObject(value) && !isArray(value)) {
                     walkNormalisers(value, normaliserOptions);
                 } else if (isDefined(value)) {
-                    throw new Error(`${nameOfPropertyToNormalise} is not an object`);
+                    throw new Error(nameOfPropertyToNormalise + ' is not an object');
                 }
             } else {
                 params[nameOfPropertyToNormalise] = applyNormaliser(
@@ -60,7 +60,7 @@ function walkNormalisers(params, normalisers) {
 }
 
 function applyNormaliser(name, options, param) {
-    const normaliser = normalise.normalisers[name];
+    var normaliser = normalise.normalisers[name];
 
     if (!normaliser) {
         throw new Error('Unknown normaliser \'' + name + '\' specified');
@@ -112,7 +112,7 @@ normalise.normalisers = {
             return param;
         }
 
-        const normalised = param.toLowerCase();
+        var normalised = param.toLowerCase();
         if (normalised === 'true') {
             return true;
         } else if (normalised === 'false') {
@@ -122,7 +122,7 @@ normalise.normalisers = {
         return param;
     },
     default: function(param, options) {
-        const defaultValue = options && options.hasOwnProperty('value') ?
+        var defaultValue = options && options.hasOwnProperty('value') ?
             options.value :
             options;
 
@@ -140,7 +140,7 @@ normalise.normalisers = {
         return decodeURIComponent(param);
     },
     split: function(param, options) {
-        const separator = options && options.hasOwnProperty('separator') ?
+        var separator = options && options.hasOwnProperty('separator') ?
             options.separator :
             options;
 
