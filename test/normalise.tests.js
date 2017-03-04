@@ -1,11 +1,11 @@
 'use strict';
 
-var normalise = require('../index');
-var should = require('should');
+const normalise = require('../index');
+const should = require('should');
 
-describe('normalise', function() {
-    describe('applies normalisers in declaration order', function() {
-        it('should trim and then set to undefined', function() {
+describe('normalise', () => {
+    describe('applies normalisers in declaration order', () => {
+        it('should trim and then set to undefined', () => {
             const normalisers = {
                 name: {
                     trim: true,
@@ -22,7 +22,7 @@ describe('normalise', function() {
             should(params).eql({ name: undefined });
         });
 
-        it('should set to undefined and then trim', function() {
+        it('should set to undefined and then trim', () => {
             const normalisers = {
                 name: {
                     undefinedIfEmpty: true,
@@ -40,8 +40,8 @@ describe('normalise', function() {
         });
     });
 
-    describe('unknown normaliser', function() {
-        it('should throw error', function() {
+    describe('unknown normaliser', () => {
+        it('should throw error', () => {
             const normalisers = {
                 name: {
                     unknownTransform: true
@@ -56,8 +56,8 @@ describe('normalise', function() {
         });
     });
 
-    describe('null params', function() {
-        it('should not throw error', function() {
+    describe('null params', () => {
+        it('should not throw error', () => {
             const normalisers = {
                 name: {
                     trim: true
@@ -68,8 +68,8 @@ describe('normalise', function() {
         });
     });
 
-    describe('undefined params', function() {
-        it('should not throw error', function() {
+    describe('undefined params', () => {
+        it('should not throw error', () => {
             const normalisers = {
                 name: {
                     trim: true
@@ -80,8 +80,8 @@ describe('normalise', function() {
         });
     });
 
-    describe('empty params', function() {
-        it('should not throw error', function() {
+    describe('empty params', () => {
+        it('should not throw error', () => {
             const normalisers = {
                 name: {
                     trim: true
@@ -92,8 +92,8 @@ describe('normalise', function() {
         });
     });
 
-    describe('unknown property', function() {
-        it('should not throw error', function() {
+    describe('unknown property', () => {
+        it('should not throw error', () => {
             const normalisers = {
                 name: {
                     trim: true
@@ -108,8 +108,8 @@ describe('normalise', function() {
         });
     });
 
-    describe('object', function() {
-        it('should walk an object', function() {
+    describe('object', () => {
+        it('should walk an object', () => {
             const normalisers = {
                 shipping: {
                     object: {
@@ -140,7 +140,7 @@ describe('normalise', function() {
             });
         });
 
-        it('should ignore a null object', function() {
+        it('should ignore a null object', () => {
             const normalisers = {
                 shipping: {
                     object: {
@@ -165,7 +165,7 @@ describe('normalise', function() {
             });
         });
 
-        it('should throw if trying to walk an array', function() {
+        it('should handle trying to walk an object but it is an array', () => {
             const normalisers = {
                 shipping: {
                     object: {
@@ -186,11 +186,18 @@ describe('normalise', function() {
                 }]
             };
 
-            (() => normalise(params, normalisers)).should.throw(/is not an object$/);
+            normalise(params, normalisers);
+
+            should(params).eql({
+                shipping: [{
+                    address: '   foo ',
+                    postcode: '  bar  '
+                }]
+            });
         });
     });
 
-    describe('default', function() {
+    describe('default', () => {
         const tests = [
             { arg: '', default: 1, expected: '' },
             { arg: 'Foo', default: 1, expected: 'Foo' },
@@ -205,7 +212,7 @@ describe('normalise', function() {
         ];
 
         tests.forEach(function(test) {
-            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg) + ' and default value ' + JSON.stringify(test.default), function() {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg) + ' and default value ' + JSON.stringify(test.default), () => {
                 const normalisers = {
                     name: {
                         default: test.default
@@ -221,7 +228,7 @@ describe('normalise', function() {
             });
         });
 
-        it('should throw if default value is undefined', function() {
+        it('should throw if default value is undefined', () => {
             const normalisers = {
                 name: {
                     default: undefined
@@ -236,8 +243,8 @@ describe('normalise', function() {
         });
     });
 
-    describe('each', function() {
-        it('should walk each of an array of objects', function() {
+    describe('each', () => {
+        it('should walk each of an array of objects', () => {
             const normalisers = {
                 shipping: {
                     each: {
@@ -267,7 +274,7 @@ describe('normalise', function() {
             });
         });
 
-        it('should throw if trying to walk something that is not an array', function() {
+        it('should handle array normaliser when trying to walk something that is not an array', () => {
             const normalisers = {
                 shipping: {
                     each: {
@@ -284,10 +291,14 @@ describe('normalise', function() {
                 shipping: { foo: 'bar' }
             };
 
-            (() => normalise(params, normalisers)).should.throw(/is not an array$/);
+            normalise(params, normalisers);
+
+            should(params).eql({
+                shipping: { foo: 'bar' }
+            });
         });
 
-        it('should walk each of an array of strings', function() {
+        it('should walk each of an array of strings', () => {
             const normalisers = {
                 shipping: {
                     each: {
@@ -310,7 +321,7 @@ describe('normalise', function() {
             });
         });
 
-        it('should walk each of an array of objects where entire object is validated', function() {
+        it('should walk each of an array of objects where entire object is validated', () => {
             const normalisers = {
                 shipping: {
                     each: {
@@ -334,7 +345,7 @@ describe('normalise', function() {
         });
     });
 
-    describe('trim', function() {
+    describe('trim', () => {
         const tests = [
             { arg: '   FOO   ', expected: 'FOO' },
             { arg: 'foo    bar', expected: 'foo    bar' },
@@ -345,7 +356,7 @@ describe('normalise', function() {
         ];
 
         tests.forEach(function(test) {
-            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), function() {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), () => {
                 const normalisers = {
                     shipping: {
                         object: {
@@ -368,7 +379,7 @@ describe('normalise', function() {
         });
     });
 
-    describe('toUpperCase', function() {
+    describe('toUpperCase', () => {
         const tests = [
             { arg: 'Hello You', expected: 'HELLO YOU' },
             { arg: 'H  ', expected: 'H  ' },
@@ -378,7 +389,7 @@ describe('normalise', function() {
         ];
 
         tests.forEach(function(test) {
-            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), function() {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), () => {
                 const normalisers = {
                     name: {
                         toUpperCase: true
@@ -395,7 +406,7 @@ describe('normalise', function() {
         });
     });
 
-    describe('toLowerCase', function() {
+    describe('toLowerCase', () => {
         const tests = [
             { arg: 'Hello You', expected: 'hello you' },
             { arg: 'H  ', expected: 'h  ' },
@@ -405,7 +416,7 @@ describe('normalise', function() {
         ];
 
         tests.forEach(function(test) {
-            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), function() {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), () => {
                 const normalisers = {
                     name: {
                         toLowerCase: true
@@ -422,7 +433,7 @@ describe('normalise', function() {
         });
     });
 
-    describe('undefinedIfEmpty', function() {
+    describe('undefinedIfEmpty', () => {
         const tests = [
             { arg: 26, expected: 26 },
             { arg: 0, expected: 0 },
@@ -434,7 +445,7 @@ describe('normalise', function() {
         ];
 
         tests.forEach(function(test) {
-            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), function() {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), () => {
                 const normalisers = {
                     name: {
                         undefinedIfEmpty: true
@@ -451,7 +462,7 @@ describe('normalise', function() {
         });
     });
 
-    describe('collapseWhitespace', function() {
+    describe('collapseWhitespace', () => {
         const tests = [
             { arg: 'hello  you    there', expected: 'hello you there' },
             { arg: '  hello  you    there ', expected: ' hello you there ' },
@@ -462,7 +473,7 @@ describe('normalise', function() {
         ];
 
         tests.forEach(function(test) {
-            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), function() {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), () => {
                 const normalisers = {
                     name: {
                         collapseWhitespace: true
@@ -479,7 +490,7 @@ describe('normalise', function() {
         });
     });
 
-    describe('replace', function() {
+    describe('replace', () => {
         const tests = [
             { arg: 'Hello Hi', pattern: /H/g, expected: '-ello -i' },
             { arg: 'Boom', pattern: /H/g, expected: 'Boom' },
@@ -489,7 +500,7 @@ describe('normalise', function() {
         ];
 
         tests.forEach(function(test) {
-            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg) + ' and pattern ' + JSON.stringify(test.pattern), function() {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg) + ' and pattern ' + JSON.stringify(test.pattern), () => {
                 const normalisers = {
                     name: {
                         replace: { pattern: test.pattern, newSubStr: '-' }
@@ -506,7 +517,7 @@ describe('normalise', function() {
         });
     });
 
-    describe('toFloat', function() {
+    describe('toFloat', () => {
         const tests = [
             { arg: '-0.98', expected: -0.98 },
             { arg: '9.98', expected: 9.98 },
@@ -522,7 +533,7 @@ describe('normalise', function() {
         ];
 
         tests.forEach(function(test) {
-            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), function() {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), () => {
                 const normalisers = {
                     value: {
                         toFloat: true
@@ -544,7 +555,7 @@ describe('normalise', function() {
         });
     });
 
-    describe('toInt', function() {
+    describe('toInt', () => {
         const tests = [
             { arg: '54', expected: 54 },
             { arg: 'H', expected: NaN },
@@ -554,7 +565,7 @@ describe('normalise', function() {
         ];
 
         tests.forEach(function(test) {
-            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), function() {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), () => {
                 const normalisers = {
                     value: {
                         toInt: true
@@ -571,7 +582,7 @@ describe('normalise', function() {
         });
     });
 
-    describe('toBool', function() {
+    describe('toBool', () => {
         const tests = [
             { arg: '54', expected: '54' },
             { arg: true, expected: true },
@@ -587,7 +598,7 @@ describe('normalise', function() {
         ];
 
         tests.forEach(function(test) {
-            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), function() {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), () => {
                 const normalisers = {
                     value: {
                         toBool: true
@@ -604,7 +615,7 @@ describe('normalise', function() {
         });
     });
 
-    describe('decodeAsUriComponent', function() {
+    describe('decodeAsUriComponent', () => {
         const tests = [
             { arg: 'http%3A%2F%2Fw3schools.com%2Fmy%20test.asp%3Fname%3Dst%C3%A5le%26car%3Dsaab', expected: 'http://w3schools.com/my test.asp?name=ståle&car=saab' },
             { arg: '%2F', expected: '/' },
@@ -615,7 +626,7 @@ describe('normalise', function() {
         ];
 
         tests.forEach(function(test) {
-            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), function() {
+            it('should return ' + JSON.stringify(test.expected) + ' for arg ' + JSON.stringify(test.arg), () => {
                 const normalisers = {
                     value: {
                         decodeAsUriComponent: true
@@ -632,7 +643,7 @@ describe('normalise', function() {
         });
     });
 
-    describe('split', function() {
+    describe('split', () => {
         const tests = [
             {
                 args: {
@@ -686,7 +697,7 @@ describe('normalise', function() {
         ];
 
         tests.forEach(function(test) {
-            it('should return ' + JSON.stringify(test.expected) + ' for args ' + JSON.stringify(test.args), function() {
+            it('should return ' + JSON.stringify(test.expected) + ' for args ' + JSON.stringify(test.args), () => {
                 const normalisers = {
                     value: {
                         split: test.args.separator

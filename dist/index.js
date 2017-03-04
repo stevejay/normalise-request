@@ -1,7 +1,7 @@
 'use strict';
 
-const traverseNormaliser = require('./src/traverse-normaliser');
-const normalisers = require('./src/normalisers');
+var traverseNormaliser = require('./src/traverse-normaliser');
+var normalisers = require('./src/normalisers');
 
 function normalise(params, normaliser) {
     traverseNormaliser(params, normaliser);
